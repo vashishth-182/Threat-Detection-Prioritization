@@ -1,58 +1,54 @@
-# Threat Detection Prioritization
+# 🔒 Threat Detection & Prioritization
 
-A Python-based project to build a threat detection model, prioritize alerts/tests, and provide a small test harness.
+[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikit-learn)](https://scikit-learn.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/vashishth-182/Threat-Detection-Prioritization)](https://github.com/vashishth-182/Threat-Detection-Prioritization/issues)
+[![Stars](https://img.shields.io/github/stars/vashishth-182/Threat-Detection-Prioritization?style=social)](https://github.com/vashishth-182/Threat-Detection-Prioritization/stargazers)
 
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Repository Structure](#repository-structure)
-- [Features](#features)
-- [Setup & Installation](#setup--installation)
-- [Usage](#usage)
-- [Data & Testing](#data--testing)
-- [Requirements](#requirements)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+> 🚀 An AI-powered system to **detect, prioritize, and test cyber threats** efficiently.  
+> Designed to reduce alert fatigue and highlight the most critical threats first.
 
 ---
 
-## Overview
+## 📌 Overview
 
-This project aims to:
+The project provides a **Python-based machine learning pipeline** for threat detection and alert prioritization.  
+Key objectives:
 
-- Train a machine learning model for detecting threats from data (e.g. KDD Cup dataset).
-- Provide a mechanism to generate smaller “mini tests” for rapid evaluation.
-- Prioritize threat detection outputs, so more serious/likely threats are surfaced first.
-- Offer an app interface (via `app.py`) to interact or test the model.
-
----
-
-## Repository Structure
-
-| File / Folder       | Purpose                                                                                             |
-| ------------------- | --------------------------------------------------------------------------------------------------- |
-| `train_model.py`    | Script to train the threat detection model on training data.                                        |
-| `app.py`            | Main interface / application to run threat detection and prioritization in real-time or batch mode. |
-| `make_mini_test.py` | Utility to build smaller test sets (mini-tests) from larger data.                                   |
-| `mini_test.txt`     | A sample mini-test dataset.                                                                         |
-| `KDDTest+.txt`      | Full test dataset (from KDD or similar).                                                            |
-| `requirements.txt`  | Python dependencies required to run the project.                                                    |
+- ✅ Train ML models on datasets (e.g. **KDD Cup**) for **intrusion/threat detection**
+- ✅ Generate **mini test datasets** for faster experimentation
+- ✅ **Prioritize** alerts by severity & likelihood
+- ✅ Provide a **simple CLI app** (`app.py`) for testing and evaluation
 
 ---
 
-## Features
+## 📂 Repository Structure
 
-- Model training for threat detection
-- Mini test set generation to speed up evaluation
-- Prioritization of detected threats (e.g. ranking, severity)
-- Simple app / script wrapper for usage
+```bash
+Threat-Detection-Prioritization/
+│── app.py              # Main interface for real-time/batch threat detection
+│── train_model.py      # Script to train the detection model
+│── make_mini_test.py   # Utility to create smaller test datasets
+│── mini_test.txt       # Sample mini test dataset
+│── KDDTest+.txt        # Full dataset (KDD-style)
+│── requirements.txt    # Project dependencies
+│── README.md           # Project documentation
+```
 
 ---
 
-## Setup & Installation
+## ✨ Features
+
+- 🔍 **Threat Detection** – Train ML models on real datasets
+- ⚡ **Mini Test Generator** – Speed up evaluation with subset datasets
+- 📊 **Threat Prioritization** – Rank threats by severity & probability
+- 🖥 **CLI Interface** – Interact with the model using `app.py`
+- 📈 Extendable for **real-world SOC usage**
+
+---
+
+## ⚙️ Setup & Installation
 
 1. **Clone the repository**
 
@@ -64,82 +60,92 @@ This project aims to:
 2. **Create a virtual environment (recommended)**
 
    ```bash
-   python3 -m venv venv
+   python -m venv venv
    source venv/bin/activate   # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
-
    ```bash
    pip install -r requirements.txt
    ```
 
 ---
 
-## Usage
+## 🚀 Usage
 
-Here are some common usage scenarios.
+### 🔹 Train the model
 
-- **Train the model**
+```bash
+python train_model.py
+```
 
-  ```bash
-  python train_model.py
-  ```
+### 🔹 Generate a mini test dataset
 
-- **Generate a mini test**
+```bash
+python make_mini_test.py
+```
 
-  ```bash
-  python make_mini_test.py
-  ```
+### 🔹 Run the app (threat detection + prioritization)
 
-- **Run via the app**
+```bash
+python app.py
+```
 
-  ```bash
-  python app.py
-  ```
-
-- **Testing & evaluation**
-
-  Use `mini_test.txt` or `KDDTest+.txt` as inputs to check how well the detection + prioritization works.
+➡️ Use `mini_test.txt` or `KDDTest+.txt` to evaluate performance.
 
 ---
 
-## Data & Testing
+## 🧪 Data & Testing
 
-- The test data files (e.g. `KDDTest+.txt`) are expected to follow the format used in the KDD Cup threat detection datasets.
-- The `make_mini_test.py` script enables extracting smaller subsets for quicker evaluation.
-
----
-
-## Requirements
-
-- Python 3.x
-- Libraries listed in `requirements.txt` (e.g. scikit-learn, pandas, numpy, etc.)
-- Sufficient compute resources to train the model with full data (may require several minutes/hours depending on dataset size)
+- 📂 `KDDTest+.txt` → Full dataset (KDD Cup style)
+- 📂 `mini_test.txt` → Lightweight dataset for quick testing
+- ⚡ Use `make_mini_test.py` to create **custom subsets**
 
 ---
 
-## Contributing
+## 📦 Requirements
 
-Contributions are welcome! Here are some ideas for improvements:
+- Python **3.x**
+- Core libraries:
+  - `scikit-learn`
+  - `numpy`
+  - `pandas`
+  - (see `requirements.txt` for full list)
 
-- Add documentation of the threat prioritization logic (how threats are scored / ranked)
-- Improve model performance (feature engineering, more data, different algorithms)
-- Add unit tests and continuous integration setup
-- Build a web interface / REST API rather than only a script
-
-If you like, open an issue, or fork + submit a pull request.
-
----
-
-## License
-
-Specify your license here (e.g. MIT License, Apache 2.0, etc.).
+⚡ Model training on the full dataset may take **minutes to hours** depending on system resources.
 
 ---
 
-## Contact
+## 🤝 Contributing
 
-If you have questions or need help, reach out to **Vashishth (@vashishth-182)**.
+Contributions are welcome!  
+You can help by:
+
+- 📝 Documenting the **prioritization logic**
+- 🎯 Improving ML model performance (new features / algorithms)
+- 🧪 Adding **unit tests + CI/CD**
+- 🌐 Building a **web dashboard / REST API**
+
+👉 Fork the repo, create a branch, and submit a PR.
 
 ---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.  
+See [LICENSE](LICENSE) for details.
+
+---
+
+## 📬 Contact
+
+👤 **Vashishth**  
+🔗 GitHub: [@vashishth-182](https://github.com/vashishth-182)
+
+👤 **Jaimil**  
+🔗 GitHub: [@JaimilModi](https://github.com/JaimilModi)
+
+👤 **Hiren**  
+🔗 GitHub: [@Hiren-Sarvaiya](https://github.com/Hiren-Sarvaiya)
+
+⭐ If you found this useful, don’t forget to **star the repo** → [Threat-Detection-Prioritization](https://github.com/vashishth-182/Threat-Detection-Prioritization)
