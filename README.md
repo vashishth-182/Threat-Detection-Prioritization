@@ -2,9 +2,8 @@
 
 [![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)](https://www.python.org/)
 [![scikit-learn](https://img.shields.io/badge/Scikit--Learn-ML-orange?logo=scikit-learn)](https://scikit-learn.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/vashishth-182/Threat-Detection-Prioritization)](https://github.com/vashishth-182/Threat-Detection-Prioritization/issues)
-[![Stars](https://img.shields.io/github/stars/vashishth-182/Threat-Detection-Prioritization?style=social)](https://github.com/vashishth-182/Threat-Detection-Prioritization/stargazers)
+[![Star](https://img.shields.io/badge/Star-181717?style=social&logo=github)](https://github.com/vashishth-182/Threat-Detection-Prioritization/stargazers)
 
 > 🚀 An AI-powered system to **detect, prioritize, and test cyber threats** efficiently.  
 > Designed to reduce alert fatigue and highlight the most critical threats first.
@@ -130,22 +129,8 @@ You can help by:
 
 ---
 
-## 📜 License
-
-This project is licensed under the **MIT License**.  
-See [LICENSE](LICENSE) for details.
-
----
-
 ## 📬 Contact
 
-👤 **Vashishth**  
-🔗 GitHub: [@vashishth-182](https://github.com/vashishth-182)
-
-👤 **Jaimil**  
-🔗 GitHub: [@JaimilModi](https://github.com/JaimilModi)
-
-👤 **Hiren**  
-🔗 GitHub: [@Hiren-Sarvaiya](https://github.com/Hiren-Sarvaiya)
+👤 **Vashishth** - [@vashishth-182](https://github.com/vashishth-182) | 👤 **Jaimil** - [@JaimilModi](https://github.com/JaimilModi) | 👤 **Hiren** - [@Hiren-Sarvaiya](https://github.com/Hiren-Sarvaiya)
 
 ⭐ If you found this useful, don’t forget to **star the repo** → [Threat-Detection-Prioritization](https://github.com/vashishth-182/Threat-Detection-Prioritization)
