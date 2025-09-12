@@ -1,113 +1,129 @@
 # train_model.py
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
-import joblib
 import os
+import argparse
+import pandas as pd
+import joblib
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
 
-# --- dataset URLs
-TRAIN_URL = "https://raw.githubusercontent.com/defcom17/NSL_KDD/master/KDDTrain+.txt"
-TEST_URL  = "https://raw.githubusercontent.com/defcom17/NSL_KDD/master/KDDTest+.txt"
+KAGGLE_URL = "https://www.kaggle.com/datasets/hussainsheikh03/nlp-based-cyber-security-dataset"
 
-# --- column names
-COLUMN_NAMES = [
- "duration","protocol_type","service","flag","src_bytes","dst_bytes","land",
- "wrong_fragment","urgent","hot","num_failed_logins","logged_in","num_compromised",
- "root_shell","su_attempted","num_root","num_file_creations","num_shells",
- "num_access_files","num_outbound_cmds","is_host_login","is_guest_login","count",
- "srv_count","serror_rate","srv_serror_rate","rerror_rate","srv_rerror_rate",
- "same_srv_rate","diff_srv_rate","srv_diff_host_rate","dst_host_count",
- "dst_host_srv_count","dst_host_same_srv_rate","dst_host_diff_srv_rate",
- "dst_host_same_src_port_rate","dst_host_srv_diff_host_rate","dst_host_serror_rate",
- "dst_host_srv_serror_rate","dst_host_rerror_rate","dst_host_srv_rerror_rate",
- "label","difficulty_level"
-]
+# Column mapping for auto-detection
+COLUMN_MAPPING = {
+    "Cleaned Threat Description": ["Threat Description", "Description", "Text"],
+    "Attack Vector": ["AttackVector", "Vector", "Attack_Type"],
+    "Threat Actor": ["Actor", "ThreatActor", "Actor_Name"],
+    "Label": ["Threat Category", "Category", "Label", "Type"]
+}
 
-# --- map attack types to categories
-def map_attack_category(name):
-    name = name.strip()
-    if name == 'normal':
-        return 'Normal'
-    DOS = {"back","land","neptune","pod","smurf","teardrop","apache2","udpstorm","processtable","worm"}
-    PROBE = {"satan","ipsweep","nmap","portsweep","mscan","saint"}
-    R2L = {"ftp_write","guess_passwd","imap","phf","multihop","warezmaster","warezclient","spy","xlock","xsnoop","snmpgetattack","snmpguess","httptunnel","sendmail","named"}
-    U2R = {"buffer_overflow","loadmodule","perl","rootkit","sqlattack","xterm","ps"}
-    if name in DOS: return 'DoS'
-    if name in PROBE: return 'Probe'
-    if name in R2L: return 'R2L'
-    if name in U2R: return 'U2R'
-    return 'Other'
+def detect_column(df, candidates):
+    """Detect column in df from list of candidate names"""
+    df_cols = [c.strip().lower() for c in df.columns]
+    for cand in candidates:
+        if cand.lower() in df_cols:
+            return df.columns[df_cols.index(cand.lower())]
+    # fallback: first object column
+    obj_cols = [c for c in df.columns if df[c].dtype == object]
+    return obj_cols[0] if obj_cols else df.columns[0]
 
-def load_df(url):
-    return pd.read_csv(url, header=None, names=COLUMN_NAMES)
+def prepare_dataset(csv_path):
+    df = pd.read_csv(csv_path, low_memory=False)
+    
+    text_col = detect_column(df, COLUMN_MAPPING["Cleaned Threat Description"])
+    vector_col = detect_column(df, COLUMN_MAPPING["Attack Vector"])
+    actor_col = detect_column(df, COLUMN_MAPPING["Threat Actor"])
+    label_col = detect_column(df, COLUMN_MAPPING["Label"])
+    
+    # Combine text features
+    df["combined_text"] = df[text_col].astype(str) + " " + \
+                          df.get(vector_col, "").astype(str) + " " + \
+                          df.get(actor_col, "").astype(str)
+    return df, "combined_text", label_col
 
-def preprocess(train_df, test_df):
-    # drop difficulty if present
-    for df in (train_df, test_df):
-        if "difficulty_level" in df.columns:
-            df.drop("difficulty_level", axis=1, inplace=True)
+def main(csv=None, out_dir="artifacts", max_features=10000):
+    os.makedirs(out_dir, exist_ok=True)
 
-    # add attack_category
-    for df in (train_df, test_df):
-        df['attack_category'] = df['label'].apply(map_attack_category)
+    # Load dataset
+    if csv is None:
+        local_path = "dataset/cybersecurity.csv"
+        if os.path.exists(local_path):
+            csv = local_path
+        else:
+            try:
+                import opendatasets as od
+                print("Dataset not found locally — attempting Kaggle download...")
+                od.download(KAGGLE_URL, data_dir="dataset")
+                candidate = "dataset/nlp-based-cyber-security-dataset/cybersecurity.csv"
+                if os.path.exists(candidate):
+                    csv = candidate
+                else:
+                    raise FileNotFoundError("CSV not found even after Kaggle download.")
+            except Exception as e:
+                raise RuntimeError(f"Failed to auto-download dataset. Please place CSV in dataset/. Error: {e}")
 
-    # categorical encode
-    cat_cols = ['protocol_type', 'service', 'flag']
-    encoders = {}
-    for c in cat_cols:
-        le = LabelEncoder()
-        le.fit(pd.concat([train_df[c], test_df[c]]))
-        train_df[c] = le.transform(train_df[c])
-        test_df[c] = le.transform(test_df[c])
-        encoders[c] = le
+    df, text_col, label_col = prepare_dataset(csv)
+    print(f"✅ Using text column: '{text_col}', label column: '{label_col}'")
 
-    drop_cols = ['label']
-    feature_cols = [c for c in train_df.columns if c not in drop_cols + ['attack_category']]
+    X = df[text_col].astype(str).values
+    y = df[label_col].astype(str).values
 
-    # scale
-    scaler = MinMaxScaler()
-    X_train = pd.DataFrame(scaler.fit_transform(train_df[feature_cols]), columns=feature_cols)
-    X_test  = pd.DataFrame(scaler.transform(test_df[feature_cols]), columns=feature_cols)
+    # Split dataset
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
 
-    y_train = train_df['attack_category']
-    y_test  = test_df['attack_category']
+    # TF-IDF vectorization
+    vect = TfidfVectorizer(max_features=max_features, ngram_range=(1, 2), stop_words="english")
+    X_train_t = vect.fit_transform(X_train)
+    X_test_t = vect.transform(X_test)
 
-    return X_train, X_test, y_train, y_test, encoders, scaler, feature_cols
+    # Encode labels
+    le = LabelEncoder()
+    y_train_enc = le.fit_transform(y_train)
+    y_test_enc = le.transform(y_test)
 
-def train_and_save(X_train, y_train, X_test, y_test, encoders, scaler, feature_cols):
-    clf = RandomForestClassifier(n_estimators=150, n_jobs=-1, random_state=42)
-    clf.fit(X_train, y_train)
+    # Classifier
+    clf = LogisticRegression(max_iter=2000, class_weight="balanced", n_jobs=-1)
+    print("🔄 Training classifier...")
+    clf.fit(X_train_t, y_train_enc)
 
-    preds = clf.predict(X_test)
-    print(classification_report(y_test, preds))
+    # Evaluate
+    preds = clf.predict(X_test_t)
+    print("\n=== Classification Report ===")
+    print(classification_report(y_test_enc, preds, target_names=le.classes_))
 
-    # confusion matrix
-    cm = confusion_matrix(y_test, preds, labels=clf.classes_)
-    plt.figure(figsize=(8,6))
-    sns.heatmap(cm, annot=True, fmt="d", xticklabels=clf.classes_, yticklabels=clf.classes_, cmap="Blues")
+    # Confusion matrix
+    cm = confusion_matrix(y_test_enc, preds)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt="d", xticklabels=le.classes_, yticklabels=le.classes_, cmap="Blues")
     plt.xlabel("Predicted")
     plt.ylabel("True")
-    plt.title("Confusion Matrix - NSL-KDD Multi-class")
-    os.makedirs("artifacts", exist_ok=True)
-    plt.savefig("artifacts/confusion_matrix.png")
+    plt.title("Confusion Matrix - NLP Cyber Security")
+    plt.tight_layout()
+    plt.savefig(os.path.join(out_dir, "confusion_matrix.png"))
     plt.close()
 
-    # save artifacts
+    # Save artifacts
+    bundle_path = os.path.join(out_dir, "model_bundle.joblib")
     joblib.dump({
-        'model': clf,
-        'scaler': scaler,
-        'encoders': encoders,
-        'feature_cols': feature_cols
-    }, 'artifacts/model_bundle.joblib')
-    print("Artifacts saved in artifacts/")
+        "model": clf,
+        "vectorizer": vect,
+        "label_encoder": le,
+        "classes": le.classes_,
+        "text_col": text_col,
+        "label_col": label_col,
+    }, bundle_path)
+    print(f"💾 Saved artifacts to {bundle_path}")
 
 if __name__ == "__main__":
-    print("Loading dataset...")
-    train_df = load_df(TRAIN_URL)
-    test_df  = load_df(TEST_URL)
-    X_train, X_test, y_train, y_test, encoders, scaler, feature_cols = preprocess(train_df, test_df)
-    train_and_save(X_train, y_train, X_test, y_test, encoders, scaler, feature_cols)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--csv", required=False, help="Path to CSV file (optional).")
+    parser.add_argument("--out", default="artifacts", help="Artifacts output directory")
+    parser.add_argument("--max_features", type=int, default=10000, help="TF-IDF max features")
+    args = parser.parse_args()
+    main(csv=args.csv, out_dir=args.out, max_features=args.max_features)

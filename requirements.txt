@@ -1,8 +1,12 @@
 pandas
 numpy
-scikit-learn
+scikit-learn>=1.0
 joblib
 streamlit
 matplotlib
 seaborn
-xgboost
+nltk
+opendatasets
+kaggle
+wordcloud
+watchdog
