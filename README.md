@@ -108,6 +108,14 @@ streamlit run app.py
 
 ---
 
+## 🎥 Demo & 📊 Presentation
+
+> 📌 **Resources available on Google Drive:**  
+> 🎯 [👉 Watch Demo Video](https://drive.google.com/file/d/1sn0L4-96K70XFIlcf1FCRlbXCyq5MxeJ/view?usp=sharing)  
+> 📑 [👉 View Project Presentation (PPT)](https://docs.google.com/presentation/d/1PWARDLoCnBEhZdDWMn8Zjvn3ikPNPV_p/edit?usp=sharing&ouid=106745314852265026008&rtpof=true&sd=true)
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome!
@@ -119,5 +127,7 @@ Contributions are welcome!
 ## 📬 Contact
 
 👤 **Vashishth** - [@vashishth-182](https://github.com/vashishth-182) | 👤 **Jaimil** - [@JaimilModi](https://github.com/JaimilModi) | 👤 **Hiren** - [@Hiren-Sarvaiya](https://github.com/Hiren-Sarvaiya)
+
+---
 
 ⭐ If you found this useful, don’t forget to **star the repo** → [Threat-Detection-Prioritization](https://github.com/vashishth-182/Threat-Detection-Prioritization)
