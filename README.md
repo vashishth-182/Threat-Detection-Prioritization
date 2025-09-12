@@ -80,7 +80,7 @@ python make_mini_test.py
 ### 🔹 Run the app (threat detection + prioritization)
 
 ```bash
-python app.py
+streamlit run app.py
 ```
 
 ➡️ Use `mini_test.txt` or `KDDTest+.txt` as input datasets to evaluate performance.
@@ -118,6 +118,6 @@ Contributions are welcome!
 
 ## 📬 Contact
 
-👤 **Vashishth** - [@vashishth-182](https://github.com/vashishth-182) | 👤 **Jaimil** - [@JaimilModi](https://github.com/JaimilModi)  | 👤 **Hiren** - [@Hiren-Sarvaiya](https://github.com/Hiren-Sarvaiya)
+👤 **Vashishth** - [@vashishth-182](https://github.com/vashishth-182) | 👤 **Jaimil** - [@JaimilModi](https://github.com/JaimilModi) | 👤 **Hiren** - [@Hiren-Sarvaiya](https://github.com/Hiren-Sarvaiya)
 
 ⭐ If you found this useful, don’t forget to **star the repo** → [Threat-Detection-Prioritization](https://github.com/vashishth-182/Threat-Detection-Prioritization)

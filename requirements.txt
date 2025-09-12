@@ -10,3 +10,4 @@ opendatasets
 kaggle
 wordcloud
 watchdog
+Shap
